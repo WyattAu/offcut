@@ -44,3 +44,7 @@
 - [ ] YouTube Shorts scheduling parity; TikTok/Instagram connectors behind
       feature flags
 - [ ] Performance loop (views back into selection) as an opt-in sync job
+
+---
+
+(c) 2026 WyattAu, AGPL-3.0 (fork addition; upstream code remains AGPL-3.0 per LICENSE).

@@ -35,3 +35,7 @@ AGPL-3.0, preserved in [LICENSE](LICENSE). Upstream copyright FujiwaraChoki
 and contributors; this fork's changes are (c) 2026 WyattAu under the same
 AGPL-3.0. If you host offcut for others, the network clause applies to you
 too. That is the point.
+
+---
+
+Fork additions and modifications: (c) 2026 WyattAu, AGPL-3.0. Upstream: see NOTICE.md and docs/UPSTREAM.md.
