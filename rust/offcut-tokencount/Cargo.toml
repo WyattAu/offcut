@@ -1,0 +1,12 @@
+[package]
+name = "offcut-tokencount"
+version = "0.1.0"
+edition = "2021"
+description = "Transcript token estimation for offcut LLM cost ceilings; pins simd-tokenizer"
+license = "MIT"
+authors = ["WyattAu"]
+publish = false
+
+[dependencies]
+simd-tokenizer = "1.0"
+serde_json = "1"
