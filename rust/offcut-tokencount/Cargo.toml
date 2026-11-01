@@ -8,5 +8,5 @@ authors = ["WyattAu"]
 publish = false
 
 [dependencies]
-simd-tokenizer = "1.0"
+simd-tokenizer = "=1.0.0"
 serde_json = "1"
