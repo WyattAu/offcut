@@ -1,0 +1,31 @@
+name: offcut-cut
+on:
+  push:
+    branches: [main]
+    paths: ["rust/offcut-cut/**", ".github/workflows/offcut-cut.yml"]
+  pull_request:
+    paths: ["rust/offcut-cut/**", ".github/workflows/offcut-cut.yml"]
+
+jobs:
+  worker-acceptance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: build
+        working-directory: rust/offcut-cut
+        run: cargo build
+      - name: acceptance — spool a cut through the supervised worker
+        run: |
+          ffmpeg -y -hide_banner -loglevel error -f lavfi -i "testsrc=duration=5:size=320x240:rate=15" -pix_fmt yuv420p test.mp4
+          BIN=rust/offcut-cut/target/debug/offcut-cut
+          $BIN worker --spool spool & WORKER=$!
+          sleep 1
+          $BIN submit --spool spool --input test.mp4 --start 00:00:01 --end 00:00:03 --output clip.mp4
+          for i in $(seq 1 30); do ls spool/done/*.json >/dev/null 2>&1 && break; sleep 1; done
+          cat spool/done/*.json
+          DUR=$(ffprobe -v error -show_entries format=duration -of csv=p=0 clip.mp4)
+          echo "clip duration: $DUR"
+          python3 -c "import sys; sys.exit(0 if abs(float('$DUR') - 2.0) < 0.2 else 1)" || {
+            echo "clip duration wrong"; exit 1; }
+          kill -INT $WORKER; sleep 2

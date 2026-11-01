@@ -20,8 +20,11 @@
 
 ## R2: Rust render pipeline
 
-- [ ] Render worker as a Rust job service (estate worker-kit + eventbus),
-      ffmpeg via the existing CLI, driven by the same task queue tables
+- [x] Render worker seed: `rust/offcut-cut` — supervised spool worker on
+      worker-kit 0.3 (JobSpec/Trigger/circuit breaker/drain), ffmpeg cut
+      stage, CI acceptance test (synthetic video, duration asserted
+      2.0s ± 0.2). Delivered 2026-11-01. Next: task-queue-tables
+      integration + reframe/caption stages
 - [ ] Face-track reframing port: keep the fallback chain (MediaPipe → OpenCV
       DNN → Haar), benchmark each stage
 - [ ] Caption burn via libass from the existing ASS generator; Ken Burns and
