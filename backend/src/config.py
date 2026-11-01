@@ -24,7 +24,7 @@ class Config:
 
         self.whisper_model = os.getenv("WHISPER_MODEL") or os.getenv("WHISPER_MODEL_SIZE", "base")
         self.transcription_provider = self._normalize_transcription_provider(
-            os.getenv("TRANSCRIPTION_PROVIDER", "assemblyai")
+            os.getenv("TRANSCRIPTION_PROVIDER", "whisper")
         )
         # Empty means auto-detect the spoken language; otherwise an AssemblyAI
         # language code such as "es" or "en_us" forces it.
