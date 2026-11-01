@@ -12,8 +12,9 @@
 
 - [ ] Local Whisper (faster-whisper) worker with word-level timestamps;
       parity target vs AssemblyAI on the upstream test set
-- [ ] Transcription provider matrix in settings: local (default) / cloud
-      (opt-in), per-task override
+- [x] Config default flipped (2026-11-01): TRANSCRIPTION_PROVIDER defaults
+      to `whisper`; assemblyai becomes opt-in. Zero-key startup config
+      verified by import. Full E2E (model download + one clip) still owed.
 - [ ] Speaker diarization path for local (pyannote) or honest feature-absent
       labeling in the UI
 - [ ] Kill the hard AssemblyAI key requirement at first-run
