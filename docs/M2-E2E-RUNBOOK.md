@@ -40,10 +40,25 @@ docker compose up -d --build
 
 ## Acceptance (the M2 gate)
 
+- [x] **Transcription-stage E2E passed 2026-11-02** — zero-key, zero-cloud:
+      espeak-ng synthesized "The quick brown fox jumps over the lazy dog"
+      (WAV -> m4a), transcribed through `media/transcription.py`
+      `transcribe_with_whisper(model_name="tiny")` via
+      `_whisper_result_to_transcript_data`: 9 words, word-level timestamps
+      present, keyword hits 3/4 ("dumps" for "jumps" — tiny-model quirk),
+      transcript text returned. Exit 0. Venv:
+      backend/requirements-local.txt (the minimal zero-key stack, discovered
+      by import-chain walk). E2E script: m2-e2e.py pattern in session log.
+- [x] Cloud SDK decoupled: assemblyai imports are lazy-guarded in
+      media/transcription.py + media/common.py — the local path imports and
+      runs with zero cloud packages installed (was an unconditional import:
+      ModuleNotFoundError killed the whisper path before this fix)
+- [ ] Full pipeline E2E (compose stack, clip rendering with burned captions)
 - [ ] Pipeline completes with no outbound calls except the model hosts
       (verify: `docker compose logs backend | grep -i "assemblyai\|api.openai"`
       is empty)
-- [ ] Transcript JSON contains word-level timestamps
+- [ ] Transcript JSON contains word-level timestamps — DONE at
+      transcription stage (see above); clip-stage re-verify pending
 - [ ] At least one clip rendered with burned captions
 - [ ] Timing recorded here (measured claims rule: date + command)
 

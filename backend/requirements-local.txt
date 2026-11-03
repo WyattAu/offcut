@@ -1,0 +1,14 @@
+# Local-transcription requirements (zero-key stack)
+#
+# Discovered empirically 2026-11-01/02 by import-chain walk (M2 E2E, see
+# docs/M2-E2E-RUNBOOK.md). Install with the system ffmpeg on PATH.
+# torch/numba/triton arrive transitively via openai-whisper.
+
+openai-whisper
+python-dotenv
+httpx
+cryptography
+sqlalchemy[asyncio]
+opencv-python-headless
+srt
+ffmpeg-python

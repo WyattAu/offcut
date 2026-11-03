@@ -26,7 +26,12 @@ import time
 
 import cv2
 
-import assemblyai as aai
+# Cloud SDK optional (see media/transcription.py): local-whisper path runs
+# with zero cloud packages installed.
+try:
+    import assemblyai as aai
+except ImportError:
+    aai = None
 
 import httpx
 

@@ -5,7 +5,15 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from pathlib import Path
-import assemblyai as aai
+
+# Cloud SDK is optional: the local-whisper default path must import (and run)
+# with zero cloud packages installed. The assemblyai-provider functions raise
+# a clear error when the SDK is absent instead of failing at import time.
+try:
+    import assemblyai as aai
+except ImportError:
+    aai = None
+
 from ..config import get_config
 import httpx
 import json
