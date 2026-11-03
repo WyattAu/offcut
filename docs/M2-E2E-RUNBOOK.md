@@ -67,3 +67,31 @@ docker compose up -d --build
 - Speaker diarization: AssemblyAI-only upstream; local path lacks it. UI
   should say so honestly rather than silently skipping.
 - slower-whisper vs fast-whisper choice: benchmark both before pinning.
+
+## Full-stack attempt (2026-11-03, compose stack, measured)
+
+| Stage | Result |
+|---|---|
+| Upload (m4a -> upload:// ref) | OK (FK fix: e2e user row seeded via psql) |
+| Local Whisper in-container | OK — model medium, CPU/FP32, 2.2 min for 5 s audio; 9 words cached (exactly the 9-word phrase) |
+| LLM selection (tinyllama via host Ollama) | FAILED — capacity, not configuration |
+
+Model-sizing finding (measured): tinyllama on CPU answers a 30-token probe
+in 41 s. The transcript-analysis prompt is orders larger -> exceeds the
+attempt window. **Options, in order of practicality:** (1) GPU Ollama (the
+box's AMD GPU needs the ROCm variant of Ollama — user decision), (2) a
+bigger/faster model is still CPU-bound, (3) bump the LLM attempt timeout and
+accept a long analysis, (4) API fallback for the selection stage only.
+
+## Local-stack env gotchas (recorded)
+
+- Compose passes only explicitly-listed env vars: ALLOW_UNSIGNED_BACKEND_AUTH
+  must be added to the override's `environment:` (it is, in our override).
+- Unsigned-auth requests need header `x-supoclip-user-id: <user>` AND a
+  seeded users row (FK from media_upload_sessions): seeded via psql
+  (`INSERT INTO users (id,name,email,"emailVerified") VALUES ('e2e-local',...)`).
+- Host-port conflicts with estate infra (5432/6379/8000): resolved by
+  docker-compose.override.yml (backend 18000, frontend 13107, redis/postgres
+  unmapped) + `docker network prune` (address pools exhausted at 33 networks).
+- Worker scans `out/build/src` only for ggml backend modules — the
+  variant-dispatch CPU modules land in `out/build/bin/` (symlinked).
