@@ -95,3 +95,31 @@ accept a long analysis, (4) API fallback for the selection stage only.
   unmapped) + `docker network prune` (address pools exhausted at 33 networks).
 - Worker scans `out/build/src` only for ggml backend modules — the
   variant-dispatch CPU modules land in `out/build/bin/` (symlinked).
+
+## Final measured finding (2026-11-03): the selection stage is model-capacity-bound
+
+Attempt 2 with qwen2.5:0.5b (fastest CPU model, 1800s budget): the pipeline
+reached the LLM stage and **failed with "Exceeded maximum output retries (2)"**
+— pydantic-ai's schema-repair retries exhausted. The 0.5B model responds but
+cannot reliably emit the structured analysis schema. This is a capability
+ceiling, not configuration: the failure signature is stable across
+tinyllama (timeout) and qwen2.5:0.5b (schema retries).
+
+### The three viable paths (user decision required)
+
+1. **GPU inference** — the box's AMD GPU + ROCm Ollama variant: ~10-30x
+   throughput, makes even 7-8B models viable. Requires the ROCm Ollama
+   install (user action).
+2. **llama3.2:3b on CPU + 3600s budget** — 2-3x slower than 0.5b per token
+   but materially better schema compliance; still may exceed retries.
+   Requires: bigger budget + llama3.2:3b pull (~2 GB).
+3. **One cheap API key for the selection stage only** — Gemini free tier or
+   a flash-tier model: the heavy paths (upload, transcription, storage,
+   render) stay zero-key/local; one small call per task for the "brain".
+   Honest framing: the zero-key promise covers the pipeline's compute, the
+   selection call is the one metered exception.
+
+### What IS proven zero-key (2026-11-02, unchanged)
+
+Upload -> local Whisper (word timestamps) -> transcript cache -> LLM-stage
+entry. The transcription stage — the heavy compute — runs fully local.
