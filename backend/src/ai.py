@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Literal
 import asyncio
 import logging
+import os
 import math
 import random
 import re
@@ -36,7 +37,12 @@ MIN_ACCEPTED_CLIP_SECONDS = 15
 MAX_ACCEPTED_CLIP_SECONDS = 60
 TRANSCRIPT_ANALYSIS_CACHE_VERSION = "windowed-rerank-v6"
 TRANSCRIPT_ANALYSIS_MAX_ATTEMPTS = 3
-TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS = 600
+# Local CPU models (e.g. qwen2.5:0.5b via Ollama) need minutes per structured
+# analysis; cloud APIs finish in seconds. The default stays cloud-shaped; the
+# env override lets zero-key local deployments extend the budget.
+TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS = int(
+    os.getenv("TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS", "600")
+)
 # Long transcripts are analysed in overlapping windows so every part of the
 # source gets the model's full attention; candidates are then reranked together.
 ANALYSIS_WINDOW_SECONDS = 12 * 60
