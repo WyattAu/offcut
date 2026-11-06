@@ -1,0 +1,11 @@
+name: mcp-guard
+on: [pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: WyattAu/mcp-sentinel@v0.1.0
+        with:
+          path: ${{ github.workspace }}
+          fail-on-critical: "true"
