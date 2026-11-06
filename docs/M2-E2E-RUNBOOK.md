@@ -123,3 +123,19 @@ tinyllama (timeout) and qwen2.5:0.5b (schema retries).
 
 Upload -> local Whisper (word timestamps) -> transcript cache -> LLM-stage
 entry. The transcription stage — the heavy compute — runs fully local.
+
+## Triple-confirmed close (2026-11-04)
+
+Attempt 3 with llama3.2:3b (2 GB, biggest practical CPU model, 1800 s
+budget): the pipeline reached the LLM stage and failed with **"Exceeded
+maximum output retries (2)"** — pydantic-ai schema-repair retries exhausted.
+Combined with attempts 1-2 (tinyllama timeout, qwen2.5:0.5b schema
+failures), three model configurations agree:
+
+**The selection stage's structured analysis requires model capacity beyond
+local CPU inference at practical budgets.** The zero-key stack is proven
+through: upload -> local Whisper -> transcript cache -> LLM-stage entry.
+Closing the gate requires one of the three paths above (ROCm GPU, bigger
+CPU model with multi-hour budgets, or one flash-tier API key for selection
+only). The full stack remains deployed and a single .env line switches
+LLM= per path.
