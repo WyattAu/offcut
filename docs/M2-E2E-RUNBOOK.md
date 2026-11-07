@@ -139,3 +139,15 @@ Closing the gate requires one of the three paths above (ROCm GPU, bigger
 CPU model with multi-hour budgets, or one flash-tier API key for selection
 only). The full stack remains deployed and a single .env line switches
 LLM= per path.
+
+## Attempt 3b: llama3.2:3b (2026-11-04, 1800 s budget)
+
+The biggest practical CPU model also exhausted schema-output retries —
+third distinct failure signature (tinyllama: timeout; qwen2.5:0.5b: fast
+schema failures; llama3.2:3b: schema retries within a 3x larger budget).
+**Triple-confirmed: the selection stage is model-capacity-bound on CPU.**
+
+Everything up to the LLM call is proven zero-key: upload, local Whisper
+(medium, in-container), transcript cache. The remaining gate is a
+model-capacity decision (see the three paths above) — a configuration or
+code change cannot close it.

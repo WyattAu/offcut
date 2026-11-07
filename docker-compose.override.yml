@@ -1,0 +1,42 @@
+# Local E2E override (2026-11-02): the host already runs postgres/redis on
+# 5432/6379 and another service on 8000. This stack only needs its ports
+# reachable INSIDE the compose network; host mappings are remapped to
+# non-conflicting debug ports.
+volumes:
+  ollama_models:
+
+services:
+  worker:
+    environment:
+      OLLAMA_BASE_URL: "http://ollama:11434/v1"
+      TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS: "1800"
+  ai-worker:
+    environment:
+      OLLAMA_BASE_URL: "http://ollama:11434/v1"
+      TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS: "1800"
+
+  ollama:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_models:/root/.ollama
+    # CPU inference; no host ports needed — compose-network internal only
+
+  backend:
+    ports: !override
+      - "127.0.0.1:18000:8000"
+    environment:
+      ALLOW_UNSIGNED_BACKEND_AUTH: "true"
+      OLLAMA_BASE_URL: "http://ollama:11434/v1"
+      TRANSCRIPT_ANALYSIS_TIMEOUT_SECONDS: "1800"
+  frontend:
+    ports: !override
+      # 0.0.0.0: reachable from the tailnet (100.93.183.32) and LAN for the
+      # phone/mobile test; firewalld+ufw still gate non-tailscale ingress
+      - "0.0.0.0:13107:3107"
+  redis:
+    ports: !override []
+  postgres:
+    ports: !override []
+  mcp:
+    ports: !override
+      - "127.0.0.1:19100:9100"
