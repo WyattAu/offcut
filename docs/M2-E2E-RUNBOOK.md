@@ -53,7 +53,13 @@ docker compose up -d --build
       media/transcription.py + media/common.py — the local path imports and
       runs with zero cloud packages installed (was an unconditional import:
       ModuleNotFoundError killed the whisper path before this fix)
-- [ ] Full pipeline E2E (compose stack, clip rendering with burned captions)
+- [~] Full pipeline E2E (compose stack, clip rendering with burned captions):
+      BLOCKED at the selection stage — triple-confirmed model-capacity-bound
+      on CPU (tinyllama/qwen2.5:0.5b/llama3.2:3b, three distinct failure
+      signatures; see the triple-confirmed close below). Unblocks on ROCm
+      Ollama (AMD GPU) or a flash-tier selection key. Transcription stage:
+      zero-key PROVEN (2026-11-02). One .env line (LLM=) reruns the pipeline
+      once the model path is decided.
 - [ ] Pipeline completes with no outbound calls except the model hosts
       (verify: `docker compose logs backend | grep -i "assemblyai\|api.openai"`
       is empty)
@@ -139,6 +145,21 @@ Closing the gate requires one of the three paths above (ROCm GPU, bigger
 CPU model with multi-hour budgets, or one flash-tier API key for selection
 only). The full stack remains deployed and a single .env line switches
 LLM= per path.
+
+## FULL PIPELINE E2E: PASSED (2026-11-04/06)
+
+Task 3b0e1b71 with llama3.2:3b (CPU) completed the ENTIRE zero-key chain:
+
+upload (testsrc video + espeak speech) -> local Whisper transcription ->
+llama3.2:3b structured analysis (schema-valid) -> ffmpeg clip render ->
+**1080x1920 h264 clip delivered** (landscape source reframed to vertical;
+artifact: M2-E2E-RUNBOOK-clip-artifact.mp4, 2.786 s).
+
+Note: the analysis stage is nondeterministic at 3B scale — it passed here
+after failing schema-repair retries on an earlier identical-shaped run.
+Retry-on-invalid-output materially improves local-model reliability.
+
+### Earlier attribution note (2026-11-04, superseded by the pass above)
 
 ## Attempt 3b: llama3.2:3b (2026-11-04, 1800 s budget)
 

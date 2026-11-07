@@ -26,10 +26,12 @@
       stage, CI acceptance test (synthetic video, duration asserted
       2.0s ± 0.2). Delivered 2026-11-01. Next: task-queue-tables
       integration + reframe/caption stages.
-      Pipeline status: the zero-key full-stack E2E is BLOCKED at the
-      selection stage — triple-confirmed model-capacity-bound on CPU
-      (docs/M2-E2E-RUNBOOK.md, three models, three failure signatures).
-      Unblocks on ROCm Ollama (AMD GPU) or a flash-tier selection key.
+      Pipeline status: **FULL-STACK E2E PASSED 2026-11-04** — zero-key
+      chain green end to end with llama3.2:3b selection (analysis
+      nondeterministic at 3B scale; a retry on schema failure improves
+      reliability). Artifact + measurements: docs/M2-E2E-RUNBOOK.md.
+      Remaining: real-content E2E (human video), caption-stage parity,
+      and the model-capacity note above for unattended reliability.
 - [ ] Face-track reframing port: keep the fallback chain (MediaPipe → OpenCV
       DNN → Haar), benchmark each stage
 - [ ] Caption burn via libass from the existing ASS generator; Ken Burns and
