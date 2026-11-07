@@ -25,7 +25,11 @@
       worker-kit 0.3 (JobSpec/Trigger/circuit breaker/drain), ffmpeg cut
       stage, CI acceptance test (synthetic video, duration asserted
       2.0s ± 0.2). Delivered 2026-11-01. Next: task-queue-tables
-      integration + reframe/caption stages
+      integration + reframe/caption stages.
+      Pipeline status: the zero-key full-stack E2E is BLOCKED at the
+      selection stage — triple-confirmed model-capacity-bound on CPU
+      (docs/M2-E2E-RUNBOOK.md, three models, three failure signatures).
+      Unblocks on ROCm Ollama (AMD GPU) or a flash-tier selection key.
 - [ ] Face-track reframing port: keep the fallback chain (MediaPipe → OpenCV
       DNN → Haar), benchmark each stage
 - [ ] Caption burn via libass from the existing ASS generator; Ken Burns and
